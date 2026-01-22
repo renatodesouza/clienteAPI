@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Cliente
+from .validators import cpf_valido
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -9,10 +10,18 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     def validate_cpf(self, cpf):
         """Verifica se o cpf tem 11 digitos e se é numérico"""
-        if len(cpf) != 11:
-            raise serializers.ValidationError('O cpf deve ter exatamente 11 digitos')
-        
-        if not cpf.isdigit():
-            raise serializers.ValidationError('O cpf deve conter apenas números')
+        if not cpf_valido(cpf):
+            raise serializers.ValidationError('O numero de cpf é invalido')
 
         return cpf
+    
+    def validate_nome(self, nome):
+        """
+        Docstring for valida_nome
+        Verifica se o nome contém somente números
+        """
+
+        if any(char.isdigit() for char in nome):
+            raise serializers.ValidationError('Não inclua números nessa campo! ')
+        
+        return nome
